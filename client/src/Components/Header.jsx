@@ -1,7 +1,9 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import {FaSearch,FaHome} from 'react-icons/fa'
+import { useSelector } from 'react-redux'
 const Header = () => {
+  const {currentUser} = useSelector((state)=>state.user)
   return (
     <div className='p-2'>
       <ul className='flex justify-center gap-4'>
@@ -12,7 +14,7 @@ const Header = () => {
         </div>
         <Link to='/about'><li>About</li></Link>
         <Link to='/signin'><li>Signin</li></Link>
-        <Link to='/profile'><li>Profile</li></Link>
+        <Link to='/profile'><li><img className='w-8 h-8 rounded-full' alt='Profile' src={currentUser.avatar}/></li></Link>
       </ul>
     </div>
   )
