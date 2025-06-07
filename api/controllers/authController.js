@@ -27,8 +27,9 @@ export const Signin = async(req,res,next)=>{
     .json(rest)
 }
 
-export const google = async(req,res,next)=>{
-    const user = await User.findOne({email})
+export const Google = async(req,res,next)=>{
+   try {
+     const user = await User.findOne({email:req.body.email})
     if(user){
         const token = jwt.sign({id:user._id},process.env.JWT_SECRET)
     const {password:pass,...rest} = user._doc;
@@ -53,4 +54,7 @@ export const google = async(req,res,next)=>{
     .status(200)
     .json(rest)
     }
+   } catch (error) {
+    next(error)
+   }
 }
