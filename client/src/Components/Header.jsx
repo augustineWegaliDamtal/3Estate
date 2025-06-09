@@ -13,8 +13,9 @@ const Header = () => {
             <FaSearch className='absolute -translate-x-1/2 right-1 my-2.5 text-gray-600 hover:text-black '/>
         </div>
         <Link to='/about'><li>About</li></Link>
-        <Link to='/signin'><li>Signin</li></Link>
-        <Link to='/profile'><li><img className='w-8 h-8 rounded-full' alt='Profile' src={currentUser.avatar}/></li></Link>
+
+        
+        {currentUser?<Link to='/profile'><li><img className='w-8 h-8 rounded-full' alt='Profile' src={currentUser.avatar}/></li></Link>:<Link to='/signin'><li>Signin</li></Link>}
       </ul>
     </div>
   )

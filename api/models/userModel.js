@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema({
     },
     avatar:{
         type:String,
-        default:"https://www.flaticon.com/free-icon/user_3177440"
+        default:""
     }
 },{timestamps:true})
 

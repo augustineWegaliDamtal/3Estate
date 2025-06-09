@@ -1,7 +1,8 @@
 import React from 'react'
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
 import OAuth from '../Components/OAuth'
+import { Link, useNavigate } from 'react-router-dom'
+
 
 const Signup = () => {
   const [formData,setFormData] = useState({})
@@ -24,13 +25,14 @@ const Signup = () => {
         body:JSON.stringify(formData)
       })
       const data = await res.json();
-      if(data.success===false){
+      if(data.success==='false'){
         setLoading(false)
         setError(data.message)
+        return;
       }
       setLoading(false)
       setError(false)
-      navigate('/home')
+     navigate('/home')
     } catch (error) {
       setError(error.message)
     }

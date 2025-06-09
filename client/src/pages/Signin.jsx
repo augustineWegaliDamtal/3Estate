@@ -1,14 +1,15 @@
 import React from 'react'
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { signinFailure, signinStart, signinSuccess } from '../redux/user/userSlice.js'
 import OAuth from '../Components/OAuth.jsx'
+import { Link, useNavigate } from 'react-router-dom'
+
 const Signin = () => {
    const [formData,setFormData] = useState({})
    const {error,loading} = useSelector((state)=>state.user)
-    const navigate = useNavigate();
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const handleFormData = (e)=>{
       setFormData({...formData,[e.target.id]:e.target.value})
@@ -26,8 +27,9 @@ const Signin = () => {
           body:JSON.stringify(formData)
         })
         const data = await res.json();
-        if(data.success===false){
+        if(data.success==='false'){
           dispatch(signinFailure(data.message))
+          return;
         }
         dispatch(signinSuccess(data))
         navigate('/home')
