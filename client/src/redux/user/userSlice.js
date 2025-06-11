@@ -14,9 +14,9 @@ export const userSlice = createSlice({
         state.loading = true
     },
     signinSuccess :(state,action)=>{
-        state.currentUser = action.payload,
-        state.error = false,
-        state.loading = false
+        state.currentUser = action.payload;
+        state.error = false;
+        state.loading = false;
     },
     signinFailure:(state,action)=>{
         state.error = action.payload,
@@ -38,7 +38,7 @@ export const userSlice = createSlice({
         state.loading = true
     },
     deleteUserSuccess :(state,action)=>{
-        state.currentUser = action.payload,
+        state.currentUser = null,
         state.error = false,
         state.loading = false
     },
@@ -50,7 +50,7 @@ export const userSlice = createSlice({
         state.loading = true
     },
     signoutUserSuccess :(state,action)=>{
-        state.currentUser = action.payload,
+        state.currentUser = null,
         state.error = false,
         state.loading = false
     },
