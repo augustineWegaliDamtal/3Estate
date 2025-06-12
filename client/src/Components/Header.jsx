@@ -43,12 +43,12 @@ const handleChange = (e)=>{
             <select className='w-full border border-gray-700 p-2 outline-0 text-pink-700 font-extrabold '  onChange={handleChange}>
             <option value='' className='text-slate-800 font-bold border'>ENTER RECORDS</option>
               <option value="/home" className='text-slate-600 hover:underline'>Deposit Form </option>
-              <option value='/about' className='text-slate-600'> Withdrawal Form </option>
-              <option value='/profile' className='text-slate-600'>Loan Form </option>
+              <option value='/withdraw' className='text-slate-600'> Withdrawal Form </option>
+              <option value='' className='text-slate-600'>Loan Form </option>
             </select>
             <select className='w-full border border-gray-700 outline-0 p-2  font-extrabold text-pink-700 '  onChange={handleChange}>
             <option value='' className='text-slate-700 font-bold border '>VIEW RECORDS</option>
-              <option value="/home" className='text-slate-600'>All Transactions </option>
+              <option value="/allTransactions" className='text-slate-600'>All Transactions </option>
               <option value='/about' className='text-slate-600'> All Withdrawals Made </option>
               <option value='/profile' className='text-slate-600 '>Loan Repayment</option>
             </select>

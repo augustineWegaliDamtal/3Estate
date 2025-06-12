@@ -4,6 +4,7 @@ import dotenv from 'dotenv'
 import authRouter from './Routes/authRoute.js';
 import cookieParser from 'cookie-parser'
 import userRouter from './Routes/userRoute.js';
+import transactRouter from './Routes/transactionsRoute.js';
 dotenv.config()
 
 mongoose.connect(process.env.MONGO_DB).then(()=>{
@@ -17,6 +18,7 @@ app.listen(3000,()=>{
 })
 app.use('/api/auth',authRouter)
 app.use('/api/user',userRouter)
+app.use('/api/transact',transactRouter)
 app.use((err,req,res,next)=>{
     const statusCode = err.statusCode || 500;
     const message = err.message || 'internal error 1'
