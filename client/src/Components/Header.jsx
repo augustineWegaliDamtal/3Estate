@@ -21,20 +21,20 @@ const handleChange = (e)=>{
 
   return (
     <div className='p-2 flex justify-between '>
-     <Link to='/home'><li><FaHome className='text-blue-900 h-6 w-6'/></li></Link>
-      <ul className='flex justify-center gap-10'>
+     <Link to='/home'><li><FaHome className='text-blue-900 h-6 w-6 '/></li></Link>
+      <ul className='flex justify-center gap-8 '>
        
-        <div className='flex relative'>
+        <div className='flex relative pl-2'>
             <input type='text' className='border border-gray-300 outline-0 p-1.5 rounded-lg' placeholder='search... '/>
             <FaSearch className='absolute -translate-x-1/2 right-1 my-2.5 text-gray-600 hover:text-black '/>
         </div>
-        <Link to='/about'><li>About</li></Link>
+       
     
-        {currentUser?<Link to='/profile'><li><img className='w-8 h-8 rounded-full' alt='Profile' src={ currentUser.avatar}/></li></Link>:<Link to='/signin'><li>Signin</li></Link>}
+        {currentUser?<Link to='/profile'><li><img className='w-10 h-10 mr-2 rounded-full' alt='Profile' src={ currentUser.avatar}/></li></Link>:<Link to='/signin'><li>Signin</li></Link>}
 
       </ul>
       <div>
-        <MdMenu className='w-10 h-10' onClick={handleIconClick} />
+        <MdMenu className='w-8 h-8 ' onClick={handleIconClick} />
         <Modal isOpen={modalIsOpen}
         onRequestClose={handleModalIsClosed}
         contentLabel=' Menu'>

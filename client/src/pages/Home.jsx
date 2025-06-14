@@ -1,15 +1,18 @@
 import React, { useState } from 'react'
-
+import {Link, useNavigate } from 'react-router-dom'
 const Home = () => {
   const currentDate = new Date();
-  const [formData,setFormData] = useState({
-    day:currentDate.getDate(),
+  const initialState = {
+ day:currentDate.getDate(),
     month:currentDate.getMonth() + 1,
     year:currentDate.getFullYear(),
     deposit:'',
     customerId:'',
     agent:'',
-  })
+  }
+  const [formData,setFormData] = useState(initialState) ; 
+  const[loading,setLoading] = useState(false);
+  const [error,setError] = useState(false);
   const handleFormChange = (e)=>{
     setFormData({...formData,[e.target.id]:e.target.value})
   }
@@ -29,10 +32,9 @@ const Home = () => {
         setError(data.message)
         setLoading(false)
       }
-      setDeposit(data)
       setLoading(false)
       setError(false)
-      navigate('/home')
+      setFormData(initialState)
     } catch (error) {
       setError(error.message)
         setLoading(false)
@@ -75,7 +77,9 @@ const Home = () => {
           <span className='text-white'>Deposit Amount</span>
             <input type='number'  id='deposit' value={formData.deposit} onChange={handleFormChange} className='outline-0 border border-gray-300 p-2 bg-white rounded-lg'   />
           </div>
-          <button className='bg-slate-900 text-white p-2'>Submit</button>
+          <button disabled={loading} className='bg-slate-900 text-white p-2'>{loading?'...loading':'Submit'}</button>
+          <Link to='/allTransactions ' className='text-slate-200 hover:underline'>All Transactions</Link>
+          {error && <div className='text-red-700'>{error}</div> }
         </form>
       </div>
     </div>
