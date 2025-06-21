@@ -6,7 +6,7 @@ const currentDate = new Date();
  day:currentDate.getDate(),
     month:currentDate.getMonth() + 1,
     year:currentDate.getFullYear(),
-    deposit:'',
+    withdrawal:'',
     customerId:'',
     agent:'',
   }
@@ -20,7 +20,7 @@ const currentDate = new Date();
   const handleSubmit = async(e)=>{
     e.preventDefault()
     try {
-      const res = await fetch('/api/transact/withdraw',{
+      const res = await fetch('/api/transact/withdrawal',{
         method:'POST',
         headers:{
           'Content-Type':'application/json'
@@ -75,7 +75,7 @@ const currentDate = new Date();
           </div>
           <div className='flex flex-col '>
           <span className='text-white'>Withdrawal Amount</span>
-            <input type='number'  id='deposit' value={formData.deposit} onChange={handleFormChange} className='outline-0 border border-gray-300 p-2 bg-white rounded-lg'   />
+            <input type='number'  id='withdrawal' value={formData.withdrawal} onChange={handleFormChange} className='outline-0 border border-gray-300 p-2 bg-white rounded-lg'   />
           </div>
           <button disabled={loading} className='bg-slate-900 text-white p-2'>{loading?'...loading':'Submit'}</button>
           <Link to='/allTransactions ' className='text-slate-200 hover:underline'>All Transactions</Link>
