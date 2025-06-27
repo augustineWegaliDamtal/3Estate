@@ -41,7 +41,7 @@ const Home = () => {
     }
   }
   return (
-    <div className='bg-gray-100   '>
+    <div className='bg-gradient-to-l from-pink-200 to-cyan-100  '>
       <h1 className='text-center font-bold text-slate-700 uppercase'>Deposit Form</h1>
       <div>
       
@@ -78,7 +78,10 @@ const Home = () => {
             <input type='number'  id='deposit' value={formData.deposit} onChange={handleFormChange} className='outline-0 border border-gray-300 p-2 bg-white rounded-lg'   />
           </div>
           <button disabled={loading} className='bg-slate-900 text-white p-2'>{loading?'...loading':'Submit'}</button>
-          <Link to='/allTransactions ' className='text-slate-200 hover:underline'>All Transactions</Link>
+         <div className='flex justify-between'>
+           <Link to='/allTransactions ' className='text-slate-200 hover:underline'>All Transactions</Link>
+            <Link to='/withdraw' className='text-slate-200 hover:underline'>Withdraws Form</Link>
+         </div>
           {error && <div className='text-red-700'>{error}</div> }
         </form>
       </div>

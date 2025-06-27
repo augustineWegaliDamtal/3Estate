@@ -1,24 +1,43 @@
 import { useState } from 'react'
 import { useEffect } from 'react'
 import {useReactTable,getCoreRowModel,flexRender} from '@tanstack/react-table';
+import { Link } from 'react-router-dom';
 
 const Alltransactions = () => {
  
   const date = new Date();
   const [filters,setFilters] = useState({
-    day:date.getDate(),
-    month:date.getMonth() +1,
-    year:date.getFullYear(),
+    day:'',
+    month:'',
+    year:'',
     agent:'',
     customerId:'',
     deposit:'',
     withdrawalAmount:"",
   }); 
-   const [transactions,setTransactions] = useState([])
+   const [transactions,setTransactions] = useState([]);
+   const [allData,setAllData] = useState([])
    const [totalWithdrawal,setTotalWithdrawal] = useState(0)
    const [balance,setBalance] = useState(0)
    const [totalDeposit,setTotalDeposit ] = useState(0)
-
+ const handleDelete = async(id)=>{
+  console.log('Frontrnd deleting ID:',id)
+  try {
+    const res = await fetch(`/api/transact/deleteTransactions/${id}`,{
+      method:'DELETE',
+    })
+    const data = await res.json();
+    console.log('server replied:',data.message)
+    if(res.ok){
+      setAllData(prev=>prev.filter(item=>item._id!==id));
+    }else{
+      console.error('delete request failed',data.message)
+    }
+  
+  } catch (err) {
+    console.error('error deleting transactions',err)
+  }
+  }
   useEffect(()=>{
     const fetchTransactions = async()=>{
       try {
@@ -32,28 +51,61 @@ const Alltransactions = () => {
         console.log('Transactions:',transactionss.map(tx=>tx.customerId))
         console.log('Withdrawals dataset:',withdrawals)
 
-        const merged = transactionss.map(tx=>{
+        const summedWithdrawals = withdrawals.reduce((acc,wd)=>{
+          const key = `${wd.customerId}_${wd.day}_${wd.month}`;
+          const amount = Number(wd.amount)||wd.withdrawal||0;
+          if(!acc[key]){
+            acc[key] = {
+              customerId:wd.customerId,
+              day:wd.day,
+              month:wd.month,
+              totalWithdrawal:amount
+            };
+          }else{
+            acc[key].totalWithdrawal+=amount;
+          }
+          return acc;
+        },{});
+        const usedWithdrawalKeys = new Set();
 
-          const match = withdrawals.find(wd=>String(wd.customerId).trim().toLowerCase()===String(tx.customerId).trim().toLowerCase() )
-      
-           return {
-            ...tx,
-            withdrawalAmount:match?match.amount||match.withdrawal||0:0
-           }
+        const merged = transactionss.map(tx=>{
+const key = `${tx.customerId}_${tx.day}_${tx.month}`;
+          const match = summedWithdrawals[key]
+         let withdrawalAmount = 0;
+         if(match&& !usedWithdrawalKeys.has(key)) {
+          withdrawalAmount = match.totalWithdrawal;
+          usedWithdrawalKeys.add(key)
+         }
+         return{
+          ...tx,withdrawalAmount
+         }
         }) 
-        const filtered = merged.filter(item=>{
-          return (
-            filters.withdrawalAmount===""|| item.withdrawalAmount===filters.withdrawalAmount
-          )
-        })
-        setTransactions(filtered)
+        setAllData(merged);
       } catch (error) {
         console.log('error fetching transactions')
       }
    
     }
     fetchTransactions();
-  },[filters]);
+  },[]);
+            useEffect(()=>{
+              const filtered = allData.filter(item=>{
+
+                const matchesWithdrawal = filters.withdrawalAmount
+                ? Number(item.withdrawalAmount)=== Number(filters.withdrawalAmount) : true;
+
+                const matchesMonth = filters.month
+                ? Number(item.month)=== Number(filters.month) : true;
+
+                const matchesDay = filters.day
+                ? Number(item.day)=== Number(filters.day) : true;
+
+                const matchesId = filters.customerId
+                ? String(item.customerId).trim().toLowerCase()=== String(filters.customerId).trim().toLowerCase() : true;
+                return matchesWithdrawal && matchesMonth && matchesDay && matchesId;
+              });
+              setTransactions(filtered)
+            },[filters,allData])
    useEffect(()=>{
         if(!transactions.length) {
           setTotalDeposit(0);
@@ -84,19 +136,31 @@ const Alltransactions = () => {
     {accessorKey: "withdrawalAmount",header:"Withdrawal",
       footer:()=>`Total:${totalWithdrawal }`,
     },
+    {
+      header:'Actions',
+      id:'actions',
+      cell:({row})=>{
+          console.log('Row data:',row.original)
+          console.log('Row being deleted:',row.original)
+        return(
+        <button  onClick={()=>handleDelete(row.original._id)}>Delete</button>
+        )
+
+      },
+    },
    
   ]
   
   const table = useReactTable({
     data:transactions,
-    columns ,
+    columns,
     getCoreRowModel:getCoreRowModel()
   });
   console.log('transaction',transactions)
-  
+ 
   return (
     <div className='p-4 bg-gray-100 h-screen '>
-      <h1 className='text-xl font-bold mb-4 text-center text-gray-700'>Transaction Records</h1>
+      <h1 className='text-xl font-bold mb-4 text-center text-gray-700'>All Transaction Records</h1>
             <table className='table-auto w-full border-collapse border border-gray-300 '>
         <thead>
           <tr className='bg-gray-200'>
@@ -113,15 +177,18 @@ const Alltransactions = () => {
                 <td key={header.column.id} className='border px-4 py-2 border-gray-500 '>
                 <input 
                 type={['day','month','year','withdrawalAmount','customerId'].includes(header.column.id)?'number':'text'}
-                placeholder={`Filter ${header.column.id}`}
+                placeholder={` ${header.column.id}`}
                 value={filters[header.column.id]||''}
                 onChange={(e)=>{
                   const value = e.target.value
                   setFilters({...filters,
-                  [header.column.id]:['day','month','year','withdrawalAmount'].includes(header.column.id)?Number(value)||'':value
+                  [header.column.id]:['day','month','year','withdrawalAmount'].includes(header.column.id)?
+                  Number(value)||'':value
                   })
+
                   }}
                 className='border p-2 w-full border-gray-500 outline-blue-300 bg-white '
+                style={{width:'100px'}}
                 />
                 </td>
               ))
@@ -133,13 +200,13 @@ const Alltransactions = () => {
           {table.getRowModel().rows.map(row=>(
             <tr key={row.id} className='hover:bg-gray-200'>
               {row.getVisibleCells().map(cell=>(
-                <td key={cell.id} className='border px-4 py-2 border-gray-300 bg-black text-white'
+                <td key={cell.id} className='border px-4 py-2 border-gray-300 bg-black  text-white'
                 style={{
                   backgroundColor: cell.column.id==='deposit' ? '#006400':
-                  cell.column.id==='withdrawalAmount'?'#8B0000':'undefined',
+                  cell.column.id==='withdrawalAmount'?'#DC2626':'undefined',
                 }}
                 >
-                  {flexRender(cell.getValue(),cell.getContext())}
+                  {flexRender(cell.column.columnDef.cell,cell.getContext())}
                 </td>
               ))}
             </tr>
@@ -150,9 +217,13 @@ const Alltransactions = () => {
        <div className='flex  gap-4 bg-black text-white font-bold w-full p-3 justify-between'>
             <span className='text-green-600 flex flex-row border p-2'>Total Deposit:   {totalDeposit}</span>
             <span className='text-blue-600 flex flex-row border p-2'>Balance: {balance}</span>
-            <span className='text-red-600 flex flex-row border p-2'> Withdrawals:    {totalWithdrawal}</span>
+            <span className='text-red-600 flex flex-row border p-2 '> Withdrawals:    -{totalWithdrawal}</span>
             
           </div>
+           <div className='flex justify-between hover:underline text-slate-600 '>
+           <Link to='/home ' className=' hover:underline'>Deposit Form</Link>
+            <Link to='/withdraw' className=' hover:underline'>Withdraws Form</Link>
+         </div>
     </div>
   )
 }

@@ -78,7 +78,10 @@ const currentDate = new Date();
             <input type='number'  id='withdrawal' value={formData.withdrawal} onChange={handleFormChange} className='outline-0 border border-gray-300 p-2 bg-white rounded-lg'   />
           </div>
           <button disabled={loading} className='bg-slate-900 text-white p-2'>{loading?'...loading':'Submit'}</button>
-          <Link to='/allTransactions ' className='text-slate-200 hover:underline'>All Transactions</Link>
+         <div className='flex justify-between'>
+                   <Link to='/allTransactions ' className='text-slate-200 hover:underline'>All Transactions</Link>
+                    <Link to='/home' className='text-slate-200 hover:underline'>Deposit Form</Link>
+          </div>
           {error && <div className='text-red-700'>{error}</div> }
         </form>
       </div>

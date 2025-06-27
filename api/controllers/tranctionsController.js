@@ -1,5 +1,6 @@
 import Transactions from "../models/transactionsModel.js";
 import Withdrawal from "../models/withdrawalModel.js";
+import { errorHandler } from "../utils/error.js";
 
 export const deposit = async(req,res,next)=>{
     try {
@@ -46,6 +47,20 @@ export const getWithdrawals = async(req,res,next)=>{
     if(withdrawal) filter.withdrawal = Number (withdrawal);
 const withdrawals = await Withdrawal.find(filter);
 res.status(200).json(withdrawals)
+  } catch (error) {
+    next(error)
+  }
+}
+export const deleteTransactions = async(req,res,next)=>{
+  const {id }= req.params
+  console.log('backend id',id)
+  try {
+    let deleted =await Transactions.findByIdAndDelete(id);
+    if(!deleted) {
+      deleted = await Withdrawal.findByIdAndDelete(id);
+    }
+    if(!deleted) return next(errorHandler('transactions not found'))
+  res.status(200).json('transaction deleted')
   } catch (error) {
     next(error)
   }
